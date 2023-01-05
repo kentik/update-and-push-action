@@ -1,22 +1,37 @@
 # update-and-push-action
-Github action updating target repository with files from local directory
+Github action updating target repository with files from local directory.
 
-Inspired by [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository)
+**Inspired by [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository)**
 
-Input parameters:
+This action expects the source tree (provided of the `source_directory`) to be checked out in the workspace.
 
-| Name | Required      | Default | Purpose |
-| ---- | ------------- | ------- | ------- |
-| source-directory     | No  | . | Directory to use as the base for target update |
-| target-user          | No  | (owner of the source repository)  | Name of the username/organization owning the target repository |
-| target-repository    | Yes |   | Name of the target repository |
-| commit-email         | Yes |   | E-mail address to use in the commit to the target repository |
-| target-server        | No  | (same as source repo) | Target git server |
-| target-branch        | No  | main | Target branch name |
-| commit-message       | No  | Update from ${ORIGIN_COMMIT} | Commit message template. ${ORIGIN_COMMIT} is replaced by the URL@commit in the origin repo triggering the action |
-| target-directory     | No  | (root of repository) | Directory in the target repository to update |
-| create-target-branch | No  | False | Boolean indicating whether to create the target branch if it does not exist |
-| exclude-filter       | No  |       | Name of file containing rsync-style exlude list |
+The action performs following steps:
+- checks out the `target_branch` from the `target_repository` into temporary directory
+- rsyncs all files and directories from `source_directory` to the `target_directory` in the checked out targer repo tree.
+  The rsync command deletes extraneous files and directories from the `target_directory` unless they are matched by an entry
+  in the `exclude_filter` file. The `.git` directory is always excluded.
+- commits modified tree to the `target_branch` of the `target_repository`
+- pushes commits to the `target_repository`
+
+If the `create_target_branch` argument is set to `True` the `target_branch` is created in the `target_repository` if it does not exist.
+The `commit_message` argument allows to provide a template for the commite message to the target repository. The `${ORIGIN_COMMIT}` variable
+is expanded to reference to the commit to the origin repo which has triggered the action. Any other environment variables provided
+to the Github action are expanded in the `commit_message` template.
+
+## Input arguments
+
+| Name | Required | Default | Purpose |
+| ---- | ---------| ------- | ------- |
+| `source_directory`| No | . | Directory providing content for the update |
+| `target_user` | No | (owner of the source repository) | Name of the username/organization owning the target repository |
+| `target_repository`| Yes | | Name of the target repository. It must exist |
+| `commit_email` | Yes | | E-mail address to use in the commit to the target repository |
+| `target_server` | No | (same as source repo) | Target git server |
+| `target_branch` | No | main | Target branch name |
+| `commit_message` | No | Update from ${ORIGIN_COMMIT} | Commit message template |
+| `target_directory` | No | (root of repository) | Directory in the target repository to update |
+| `create_target_branch` | No | False | Boolean indicating whether to create the target branch if it does not exist |
+| `exclude_filter` | No | | Name of file containing rsync-style exlude list |
 
 ## Authentication and permissions
 
