@@ -1,9 +1,6 @@
-name: Update target repository with data from local directory
+name: update-and-push
 description: >-
-  This action supports automatic update of target repository based on changes to source repository.
-  The source repository must be checked out in the $GITHUB_WORKSPACE directory (e.g. using the [actions/checkout](https://github.com/actions/checkout) action).
-  The action removes extraneous files and directories from the target repository. It allows to exclude files from the update/deletion.
-  Upated tree is committed to the target branch (which is created, if it does not exist) and pushed to the target repository.
+  This action supports update of target repository with files in source repository.
 inputs:
   source-directory:
     description: Directory to use as base for update
