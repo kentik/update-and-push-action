@@ -4,8 +4,9 @@ Github action updating target repository with files from local directory
 Inspired by [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository)
 
 Input parameters:
+
 | Name | Required      | Default | Purpose |
-| ==== | ============= | ======= | ======= |
+| ---- | ------------- | ------- | ------- |
 | source-directory     | No  | . | Directory to use as the base for target update |
 | target-user          | Yes |   | Name of the username/organization owning the target repository |
 | target-repository    | Yes |   | Name of the target repository |
