@@ -92,7 +92,7 @@ git config --global --add safe.directory "${clone_dir}"
 
 echo "[+] Checking if ${INPUT_SOURCE_DIRECTORY} exists"
 if [ ! -d "${INPUT_SOURCE_DIRECTORY}" ]; then
-	echo "::error::${INPUT_SOURCE_DIRECTORY} does not exist"
+	echo "::error::Source directory '${INPUT_SOURCE_DIRECTORY}' does not exist"
 	echo "::error::It must exist in the GITHUB_WORKSPACE when this action is executed."
 	exit 1
 fi
@@ -103,8 +103,11 @@ excludes="--exclude /.git"
 if [ -n "${INPUT_EXCLUDE_FILTER}" ]; then
 	excludes="${excludes} --exclude-from ${INPUT_EXCLUDE_FILTER}"
 fi
-echo "[+] Copying contents of ${INPUT_SOURCE_DIRECTORY} to ${target_dir}"
-rsync -v -r --delete ${excludes} ${INPUT_SOURCE_DIRECTORY}/ ${target_dir}/
+echo "[+] Copying contents of source directory '${INPUT_SOURCE_DIRECTORY}' to target tree '${target_dir}'"
+if [ -n "${RUNNER_DEBUG}" ]; then
+	rsync_extra_args="-v"
+fi
+rsync ${rsync_extra_args} -r --delete ${excludes} ${INPUT_SOURCE_DIRECTORY}/ ${target_dir}/
 
 if [ -n "${RUNNER_DEBUG}" ]; then
 	echo "[+] Target directory after update:"
@@ -115,7 +118,7 @@ fi
 cd ${clone_dir}
 
 if [ ${new_branch} -ne 0 ]; then
-	echo "[+] Creating target branch ${INPUT_TARGET_BRANCH}"
+	echo "[+] Creating target branch '${INPUT_TARGET_BRANCH}'"
 	git branch ${INPUT_TARGET_BRANCH}
 	git switch ${INPUT_TARGET_BRANCH}
 fi
