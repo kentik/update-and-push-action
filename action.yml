@@ -2,45 +2,45 @@ name: update-and-push
 description: >-
   This action supports update of target repository with files in source repository.
 inputs:
-  source-directory:
+  source_directory:
     description: Directory to use as base for update
     default: '.'
     required: true
-  target-user:
+  target_user:
     description: >-
       [Optional[ Name of the user/organization owning the target repository.
       (Default: same as the owner of the source repository)
     default: ''
     required: False
-  target-repository:
+  target_repository:
     description: Name of the target repository
     required: true
-  commit-email:
+  commit_email:
     description: E-mail used in git commit
     required: true
-  target-server:
+  target_server:
     description: 'Target git server'
     default: ''
     required: false
-  target-branch:
+  target_branch:
     description: >-
       [Optional] Target branch name (default: "main")
     default: main
     required: false
-  commit-message:
+  commit_message:
     description: >-
       [Optional] Commit message. ${ORIGIN_COMMIT} is replaced by the URL@commit in the origin repo triggering the action
     default: 'Update from ${ORIGIN_COMMIT}'
     required: false
-  target-directory:
+  target_directory:
     description: '[Optional] Directory in the target repository to update'
     default: ''
     required: false
-  create-target-branch:
+  create_target_branch:
     description: '[Optional] Boolean indicating whether to create the target branch if it does not exist'
     default: 'false'
     required: false
-  exclude-filter:
+  exclude_filter:
     description: '[Optional] Name of file containing rsync-style exlude list'
     required: false
     default: ''
@@ -49,16 +49,16 @@ runs:
   using: docker
   image: Dockerfile
   args:
-    - '${{ inputs.source-directory }}'
-    - '${{ inputs.target-user }}'
-    - '${{ inputs.target-repository }}'
-    - '${{ inputs.target-server }}'
-    - '${{ inputs.commit-email }}'
-    - '${{ inputs.target-branch }}'
-    - '${{ inputs.commit-message }}'
-    - '${{ inputs.target-directory }}'
-    - '${{ inputs.create-target-branch }}'
-    - '${{ inputs.exclude-filter }}'
+    - '${{ inputs.source_directory }}'
+    - '${{ inputs.target_user }}'
+    - '${{ inputs.target_repository }}'
+    - '${{ inputs.target_server }}'
+    - '${{ inputs.commit_email }}'
+    - '${{ inputs.target_branch }}'
+    - '${{ inputs.commit_message }}'
+    - '${{ inputs.target_directory }}'
+    - '${{ inputs.create_target_branch }}'
+    - '${{ inputs.exclude_filter }}'
 branding:
   icon: git-commit
   color: green
