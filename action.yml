@@ -30,7 +30,7 @@ inputs:
   commit-message:
     description: >-
       [Optional] Commit message. ${ORIGIN_COMMIT} is replaced by the URL@commit in the origin repo triggering the action
-    default: Update from ${ORIGIN_COMMIT}
+    default: 'Update from ${ORIGIN_COMMIT}'
     required: false
   target-directory:
     description: '[Optional] Directory in the target repository to update'
@@ -53,8 +53,7 @@ runs:
     - '${{ inputs.target-user }}'
     - '${{ inputs.target-repository }}'
     - '${{ inputs.target-server }}'
-    - '${{ inputs.user-email }}'
-    - '${{ inputs.user-name }}'
+    - '${{ inputs.commit-email }}'
     - '${{ inputs.target-branch }}'
     - '${{ inputs.commit-message }}'
     - '${{ inputs.target-directory }}'
