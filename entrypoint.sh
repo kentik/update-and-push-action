@@ -15,8 +15,11 @@ TARGET_DIRECTORY="${8}"
 CREATE_TARGET_BRANCH="${9}"
 EXCLUDE_FILTER="${10}"
 
+if [ -z "${TARGET_USER}" ]; then
+	TARGET_USER=${GITHUB_REPOSITORY_OWNER}
+fi
 if [ -z "${TARGET_SERVER}" ]; then
-	TARGET_SERVER=${GITHUB_SERVER}
+	TARGET_SERVER=${GITHUB_SERVER_URL##*/}
 fi
 
 if [ -n "${SSH_DEPLOY_KEY}" ]; then
@@ -122,7 +125,7 @@ if diff-index --quiet HEAD; then
 	exit 0
 fi
 
-ORIGIN_COMMIT="https://${GITHUB_SERVER}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+ORIGIN_COMMIT="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
 msg=$(eval echo $COMMIT_MESSAGE)
 git commit --message "${msg}"
 

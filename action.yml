@@ -7,8 +7,11 @@ inputs:
     default: '.'
     required: true
   target-user:
-    description: Name of the user/organization owning the target repository
-    required: true
+    description: >-
+      [Optional[ Name of the user/organization owning the target repository.
+      (Default: same as the owner of the source repository)
+    default: ''
+    required: False
   target-repository:
     description: Name of the target repository
     required: true

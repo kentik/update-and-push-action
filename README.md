@@ -8,7 +8,7 @@ Input parameters:
 | Name | Required      | Default | Purpose |
 | ---- | ------------- | ------- | ------- |
 | source-directory     | No  | . | Directory to use as the base for target update |
-| target-user          | Yes |   | Name of the username/organization owning the target repository |
+| target-user          | No  | (owner of the source repository)  | Name of the username/organization owning the target repository |
 | target-repository    | Yes |   | Name of the target repository |
 | commit-email         | Yes |   | E-mail address to use in the commit to the target repository |
 | target-server        | No  | (same as source repo) | Target git server |
