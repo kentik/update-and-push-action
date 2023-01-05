@@ -1,0 +1,63 @@
+name: Update target repository with data from local directory
+description: >-
+  This action supports automatic update of target repository based on changes to source repository.
+  The source repository must be checked out in the $GITHUB_WORKSPACE directory (e.g. using the [actions/checkout](https://github.com/actions/checkout) action).
+  The action removes extraneous files and directories from the target repository. It allows to exclude files from the update/deletion.
+  Upated tree is committed to the target branch (which is created, if it does not exist) and pushed to the target repository.
+inputs:
+  source-directory:
+    description: Directory to use as base for update
+    default: '.'
+    required: true
+  target-user:
+    description: Name of the user/organization owning the target repository
+    required: true
+  target-repository:
+    description: Name of the target repository
+    required: true
+  commit-email:
+    description: E-mail used in git commit
+    required: true
+  target-server:
+    description: 'Target git server'
+    default: ''
+    required: false
+  target-branch:
+    description: >-
+      [Optional] Target branch name (default: "main")
+    default: main
+    required: false
+  commit-message:
+    description: >-
+      [Optional] Commit message. ${ORIGIN_COMMIT} is replaced by the URL@commit in the origin repo triggering the action
+    default: Update from ${ORIGIN_COMMIT}
+    required: false
+  target-directory:
+    description: '[Optional] Directory in the target repository to update'
+    default: ''
+    required: false
+  create-target-branch:
+    description: '[Optional] Boolean indicating whether to create the target branch if it does not exist'
+    default: 'false'
+    required: false
+  exclude-filter:
+    description: '[Optional] Name of file containing rsync-style exlude list'
+        
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - '${{ inputs.source-directory }}'
+    - '${{ inputs.target-user }}'
+    - '${{ inputs.target-repository }}'
+    - '${{ inputs.target-server }}'
+    - '${{ inputs.user-email }}'
+    - '${{ inputs.user-name }}'
+    - '${{ inputs.target-branch }}'
+    - '${{ inputs.commit-message }}'
+    - '${{ inputs.target-directory }}'
+    - '${{ inputs.create-target-branch }}'
+    - '${{ inputs.exclude-filter }}'
+branding:
+  icon: git-commit
+  color: green
