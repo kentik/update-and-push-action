@@ -1,7 +1,5 @@
 #!/bin/sh -l
-
 set -e # if a command fails it stops the execution
-set -u # script fails if trying to access to an undefined variable
 
 echo "[+] Action start"
 SOURCE_DIRECTORY="${1}"
@@ -54,8 +52,10 @@ fi
 clone_dir=$(mktemp -d)
 new_branch=0
 
-echo "[+] Git version"
-git --version
+if [ -n "${RUNNER_DEBUG}" ]; then
+	echo "[+] Git version"
+	git --version
+fi
 
 # Setup git
 git config --global user.email "${COMMIT_EMAIL}"
@@ -80,7 +80,10 @@ if ! git clone --single-branch --depth 1 --branch ${TARGET_BRANCH} ${git_url} ${
 	fi
 fi
 
-echo "[+] Set cloned repo as safe (${clone_dir})"
+if [ -n "${RUNNER_DEBUG}" ]; then
+	echo "[+] Set cloned repo as safe (${clone_dir})"
+fi
+
 # Related to https://github.com/cpina/github-action-push-to-another-repository/issues/64 and https://github.com/cpina/github-action-push-to-another-repository/issues/64
 # TODO: review before releasing it as a version
 git config --global --add safe.directory "${clone_dir}"
@@ -101,8 +104,10 @@ fi
 echo "[+] Copying contents of ${SOURCE_DIRECTORY} to ${target_dir}"
 rsync -v -r --delete ${excludes} ${SOURCE_DIRECTORY}/ ${target_dir}/
 
-echo "[+] Target directory after update:"
-ls -la ${target_dir}
+if [ -n "${RUNNER_DEBUG}" ]; then
+	echo "[+] Target directory after update:"
+	ls -la ${target_dir}
+fi
 
 # Commit any changes and push them to the target repo
 cd ${clone_dir}
@@ -116,8 +121,10 @@ fi
 echo "[+] Adding git commit"
 git add .
 
-echo "[+] git status:"
-git status
+if [ -n "${RUNNER_DEBUG}" ]; then
+	echo "[+] git status:"
+	git status
+fi
 
 # Avoid the git commit failure if there are no changes to commit
 if diff-index --quiet HEAD; then
