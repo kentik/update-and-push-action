@@ -115,9 +115,9 @@ fi
 cd ${clone_dir}
 
 if [ ${new_branch} -ne 0 ]; then
-	echo "[+] Creating target branch ${TARGET_BRANCH}"
-	git branch ${TARGET_BRANCH}
-	git switch ${TARGET_BRANCH}
+	echo "[+] Creating target branch ${INPUT_TARGET_BRANCH}"
+	git branch ${INPUT_TARGET_BRANCH}
+	git switch ${INPUT_TARGET_BRANCH}
 fi
 
 echo "[+] Adding git commit"
@@ -144,4 +144,4 @@ git commit --message "${msg}"
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
-git push ${git_url} --set-upstream "${TARGET_BRANCH}"
+git push ${git_url} --set-upstream "${INPUT_TARGET_BRANCH}"
