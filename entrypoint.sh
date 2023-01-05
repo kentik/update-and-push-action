@@ -134,16 +134,18 @@ fi
 # Avoid the git commit failure if there are no changes to commit
 if git diff-index --quiet HEAD; then
 	echo "[+] No changes to commit"
-	exit 0
-fi
+	if [ ${new_branch} -eq 0 ]; then
+		exit 0
+	fi
+else
+	ORIGIN_COMMIT="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+	msg=$(eval echo $INPUT_COMMIT_MESSAGE)
+	if [ -n "${RUNNER_DEBUG}" ]; then
+		echo "[+] commit message: '${msg}'"
+	fi
 
-ORIGIN_COMMIT="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
-msg=$(eval echo $INPUT_COMMIT_MESSAGE)
-if [ -n "${RUNNER_DEBUG}" ]; then
-	echo "[+] commit message: '${msg}'"
+	git commit --message "${msg}"
 fi
-
-git commit --message "${msg}"
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
