@@ -42,6 +42,8 @@ inputs:
     required: false
   exclude-filter:
     description: '[Optional] Name of file containing rsync-style exlude list'
+    required: false
+    default: ''
         
 runs:
   using: docker
