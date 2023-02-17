@@ -112,12 +112,12 @@ fi
 git config --global --add safe.directory "${clone_dir}"
 
 if [ -n "${INPUT_TRANSFER_MAP}" ]; then
-	if [ ! -f ${INPUT_TRANFER_MAP} ]; then
-		echo "::error tranfer_map file '${INPUT_TRANSFER_MAP} does not exist"
+	if [ ! -f ${INPUT_TRANSFER_MAP} ]; then
+		echo "::error transfer_map file '${INPUT_TRANSFER_MAP} does not exist"
 		exit 1
 	fi
 	if [ -n "${RUNNER_DEBUG}" ]; then
-		echo "[+] Using tranfer_map: ${INPUT_TRANSFER_MAP}"
+		echo "[+] Using transfer_map: ${INPUT_TRANSFER_MAP}"
 	fi
 
 	grep -v "^[ \t]*#" ${INPUT_TRANSFER_MAP} | while read -r src dst; do
@@ -131,12 +131,12 @@ if [ -n "${INPUT_TRANSFER_MAP}" ]; then
 	done
 else
 	fail=0
-	if [ -n "${INPUT_SOURCE_DIRECTORY}" ]; then
-		echo "::error neither 'tranfer_map' nor 'source_directory' specified"
+	if [ -z "${INPUT_SOURCE_DIRECTORY}" ]; then
+		echo "::error neither 'transfer_map' nor 'source_directory' specified"
 		fail=1
 	fi
-	if [ -n "${INPUT_TARGET_DIRECTORY}" ]; then
-		echo "::error neither 'tranfer_map' nor 'target_directory' specified"
+	if [ -z "${INPUT_TARGET_DIRECTORY}" ]; then
+		echo "::error neither 'transfer_map' nor 'target_directory' specified"
 		fail=1
 	fi
 	if [ ${fail} -ne 0 ]; then
