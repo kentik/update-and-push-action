@@ -34,9 +34,9 @@ Examples of transfer map:
 # copy entire source tree to target
 . .
 ```
-- copy `my_code` to `new_code`
+- copy content of directory `my_code`  to `new_code`
 ```
-my_code new_code # adding new code
+my_code/ new_code # this is comment
 
 # copy single file to different location
 docs/README.md new_code/README.new.md

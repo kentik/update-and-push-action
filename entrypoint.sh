@@ -10,16 +10,16 @@ copy_files() {
 		echo "::error::Source files and directories must exist in the GITHUB_WORKSPACE when this action is executed."
 		exit 1
 	fi
-	target_dir=${clone_dir}/${dst}
+	target=${clone_dir}/${dst}
 	excludes="--exclude /.git"
 	if [ -n "${INPUT_EXCLUDE_FILTER}" ]; then
 		excludes="${excludes} --exclude-from ${INPUT_EXCLUDE_FILTER}"
 	fi
-	echo "[+] Copying contents of source directory '${src}' '${target_dir}'"
+	echo "[+] Copying '${src}' to '${target}'"
 	if [ -n "${RUNNER_DEBUG}" ]; then
 		rsync_extra_args="-v"
 	fi
-	rsync ${rsync_extra_args} -r --delete ${excludes} ${src}/ ${target_dir}/
+	rsync ${rsync_extra_args} -r --delete ${excludes} ${src} ${target}
 }
 
 echo "[+] Action start"
