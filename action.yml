@@ -10,12 +10,13 @@ inputs:
     default: ''
     required: false
   source_directory:
-    description: [Optional] Directory to use as base for update
+    description: >-
+      [Optional] Directory to use as base for update
     default: '.'
     required: false
   target_user:
     description: >-
-      [Optional[ Name of the user/organization owning the target repository.
+      [Optional] Name of the user/organization owning the target repository.
       (Default: same as the owner of the source repository)
     default: ''
     required: false
