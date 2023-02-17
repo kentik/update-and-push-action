@@ -29,19 +29,19 @@ Lines starting with `#` are treated as comments and ignored as well as any trail
 Extracted `source` and `destination` are directly passed as arguments to `rsync`
 
 Examples of transfer map:
-- simples possible
+- simplest possible
 ```
-# copy of entire source tree to target
+# copy entire source tree to target
 . .
 ```
-- copying `my_code` to `new_code`
+- copy `my_code` to `new_code`
 ```
 my_code new_code # adding new code
 
 # copy single file to different location
 docs/README.md new_code/README.new.md
 ```
-- copying complete source tree to `import/src` directory 
+- copy complete source tree to `import/src` 
 ```
    # also treated as a comment
 . import/src
