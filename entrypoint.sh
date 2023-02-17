@@ -124,6 +124,23 @@ if [ -n "${INPUT_TRANSFER_MAP}" ]; then
 		# removing eventual comments
 		dst=${dst%% *}
 		dst=${dst%%#*}
+		if [ -z "${src}" ]; then
+			if [ -z "${dst}" ]; then
+				if [ -n "${RUNNER_DEBUG}" ]; then
+					echo "[+] ignoring empty line"
+				fi
+				continue
+			else
+				echo "::error missing <destination> in transfer_map: '${INPUT_TRANSFER_MAP}'"
+				exit 1
+			fi
+		fi
+		for e in ${src} ${dst}; do
+			if [ "${e##*..*}" != "${e}" ]; then
+				echo "::error invalid entry '${e}' in transfer_map '${INPUT_TRANSFER_MAP} - must not contain '..'"
+				exit 1
+			fi
+		done
 		if [ -n "${RUNNER_DEBUG}" ]; then
 			echo "[+] src: ${src} dst: ${dst}"
 		fi

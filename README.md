@@ -7,8 +7,10 @@ This action expects the source tree (provided of the `source_directory`) to be c
 
 The action performs following steps:
 - checks out the `target_branch` from the `target_repository` into temporary directory
-- rsyncs all files and directories from `source_directory` to the `target_directory` in the checked out targer repo tree.
-  The rsync command deletes extraneous files and directories from the `target_directory` unless they are matched by an entry
+- if `transfer_map` file is specified, rsyncs all files and directories from `src` to the `dst` for every (non-comment) line in the file.
+  Transfer map syntax is described bellow.
+  If no `transfer_map` is provided, rsyncs all filess and directories from `source_directory` to `target_directory`
+  The rsync command deletes extraneous files and directories from the destination directory unless they are matched by an entry
   in the `exclude_filter` file. The `.git` directory is always excluded.
 - commits modified tree to the `target_branch` of the `target_repository`
 - pushes commits to the `target_repository`
@@ -18,10 +20,35 @@ The `commit_message` argument allows to provide a template for the commite messa
 is expanded to reference to the commit to the origin repo which has triggered the action. Any other environment variables provided
 to the Github action are expanded in the `commit_message` template.
 
+## Transfer map syntax
+
+The `tranfer_map` files allows to describe simple transformations of source tree before commiting it to `target_repository`.
+Each line in the file is expected to contain 2 strings `source` and `destination` separated by whitespace.
+Lines starting with `#` are treated as comments and ignored as well as any trailing text after after `#`.
+`source` nor `destination` must not contain `..`.
+Extracted `source` and `destination` are directly passed as arguments to `rsync`
+
+Examples of transfer map:
+- simples possible
+```
+# copy of entire source tree to target
+. .
+```
+- copying `my_code` to `new_code` in target
+```
+my_code new_code # adding new code
+```
+- copying complete source tree to `import/src` directory in the 
+```
+   # put everything to import/src
+. import/src
+```
+
 ## Input arguments
 
 | Name | Required | Default | Purpose |
 | ---- | ---------| ------- | ------- |
+| `transfer_map` | No | | Name of tranfer map file |
 | `source_directory`| No | . | Directory providing content for the update |
 | `target_user` | No | (owner of the source repository) | Name of the username/organization owning the target repository |
 | `target_repository`| Yes | | Name of the target repository. It must exist |
