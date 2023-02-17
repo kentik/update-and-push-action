@@ -5,9 +5,9 @@ copy_files() {
 	local src="$1"
 	local dst="$2"
 	echo "[+] Checking if ${src} exists"
-	if [ ! -d "${src}" ]; then
-		echo "::error::Source directory '${src}' does not exist"
-		echo "::error::It must exist in the GITHUB_WORKSPACE when this action is executed."
+	if [ ! -e "${src}" ]; then
+		echo "::error::'${src}' does not exist"
+		echo "::error::Source files and directories must exist in the GITHUB_WORKSPACE when this action is executed."
 		exit 1
 	fi
 	target_dir=${clone_dir}/${dst}
