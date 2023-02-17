@@ -130,18 +130,6 @@ if [ -n "${INPUT_TRANSFER_MAP}" ]; then
 		copy_files ${src} ${dst}
 	done
 else
-	fail=0
-	if [ -z "${INPUT_SOURCE_DIRECTORY}" ]; then
-		echo "::error neither 'transfer_map' nor 'source_directory' specified"
-		fail=1
-	fi
-	if [ -z "${INPUT_TARGET_DIRECTORY}" ]; then
-		echo "::error neither 'transfer_map' nor 'target_directory' specified"
-		fail=1
-	fi
-	if [ ${fail} -ne 0 ]; then
-		exit 1
-	fi
 	copy_files ${INPUT_SOURCE_DIRECTORY} ${INPUT_TARGET_DIRECTORY}
 fi
 if [ -n "${RUNNER_DEBUG}" ]; then
