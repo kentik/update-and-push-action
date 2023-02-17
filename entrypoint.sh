@@ -1,6 +1,27 @@
 #!/bin/sh
 set -e # if a command fails it stops the execution
 
+copy_files() {
+	local src="$1"
+	local dst="$2"
+	echo "[+] Checking if ${src} exists"
+	if [ ! -d "${src}" ]; then
+		echo "::error::Source directory '${src}' does not exist"
+		echo "::error::It must exist in the GITHUB_WORKSPACE when this action is executed."
+		exit 1
+	fi
+	target_dir=${clone_dir}/${dst}
+	excludes="--exclude /.git"
+	if [ -n "${INPUT_EXCLUDE_FILTER}" ]; then
+		excludes="${excludes} --exclude-from ${INPUT_EXCLUDE_FILTER}"
+	fi
+	echo "[+] Copying contents of source directory '${src}' '${target_dir}'"
+	if [ -n "${RUNNER_DEBUG}" ]; then
+		rsync_extra_args="-v"
+	fi
+	rsync ${rsync_extra_args} -r --delete ${excludes} ${src}/ ${target_dir}/
+}
+
 echo "[+] Action start"
 
 if [ -n "${RUNNER_DEBUG}" ]; then
@@ -90,25 +111,36 @@ fi
 # TODO: review before releasing it as a version
 git config --global --add safe.directory "${clone_dir}"
 
-echo "[+] Checking if ${INPUT_SOURCE_DIRECTORY} exists"
-if [ ! -d "${INPUT_SOURCE_DIRECTORY}" ]; then
-	echo "::error::Source directory '${INPUT_SOURCE_DIRECTORY}' does not exist"
-	echo "::error::It must exist in the GITHUB_WORKSPACE when this action is executed."
-	exit 1
-fi
+if [ -n "${INPUT_TRANSFER_MAP}" ]; then
+	if [ ! -f ${INPUT_TRANFER_MAP} ]; then
+		echo "::error tranfer_map file '${INPUT_TRANSFER_MAP} does not exist"
+		exit 1
+	fi
+	if [ -n "${RUNNER_DEBUG}" ]; then
+		echo "[+] Using tranfer_map: ${INPUT_TRANSFER_MAP}"
+	fi
 
-target_dir=${clone_dir}/${INPUT_TARGET_DIRECTORY}
-
-excludes="--exclude /.git"
-if [ -n "${INPUT_EXCLUDE_FILTER}" ]; then
-	excludes="${excludes} --exclude-from ${INPUT_EXCLUDE_FILTER}"
+	cat ${INPUT_TRANSFER_MAP} | while read -r src dst; do
+		if [ -n "${RUNNER_DEBUG}" ]; then
+			echo "[+] src: ${src} dst: ${dst}"
+		fi
+		copy_files ${src} ${dst}
+	done
+else
+	fail=0
+	if [ -n "${INPUT_SOURCE_DIRECTORY}" ]; then
+		echo "::error neither 'tranfer_map' nor 'source_directory' specified"
+		fail=1
+	fi
+	if [ -n "${INPUT_TARGET_DIRECTORY}" ]; then
+		echo "::error neither 'tranfer_map' nor 'target_directory' specified"
+		fail=1
+	fi
+	if [ ${fail} -ne 0 ]; then
+		exit 1
+	fi
+	copy_files ${INPUT_SOURCE_DIRECTORY} ${INPUT_TARGET_DIRECTORY}
 fi
-echo "[+] Copying contents of source directory '${INPUT_SOURCE_DIRECTORY}' to target tree '${target_dir}'"
-if [ -n "${RUNNER_DEBUG}" ]; then
-	rsync_extra_args="-v"
-fi
-rsync ${rsync_extra_args} -r --delete ${excludes} ${INPUT_SOURCE_DIRECTORY}/ ${target_dir}/
-
 if [ -n "${RUNNER_DEBUG}" ]; then
 	echo "[+] Target directory after update:"
 	ls -la ${target_dir}

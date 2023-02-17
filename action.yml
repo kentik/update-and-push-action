@@ -2,16 +2,23 @@ name: update-and-push
 description: >-
   This action supports update of target repository with files in source repository.
 inputs:
+  transfer_map:
+    description: >-
+      [Optional] Path to configuration file describing transformation
+      of directory structure from source to destionation repository.
+      If present, overrides 'source_directory' and 'target_directory'
+    default: ''
+    required: false
   source_directory:
-    description: Directory to use as base for update
+    description: [Optional] Directory to use as base for update
     default: '.'
-    required: true
+    required: false
   target_user:
     description: >-
       [Optional[ Name of the user/organization owning the target repository.
       (Default: same as the owner of the source repository)
     default: ''
-    required: False
+    required: false
   target_repository:
     description: Name of the target repository
     required: true
@@ -49,6 +56,7 @@ runs:
   using: docker
   image: Dockerfile
   args:
+    - '${{ inputs.transfer_map }}' 
     - '${{ inputs.source_directory }}'
     - '${{ inputs.target_user }}'
     - '${{ inputs.target_repository }}'
