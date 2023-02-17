@@ -34,13 +34,16 @@ Examples of transfer map:
 # copy of entire source tree to target
 . .
 ```
-- copying `my_code` to `new_code` in target
+- copying `my_code` to `new_code`
 ```
 my_code new_code # adding new code
+
+# copy single file to different location
+docs/README.md new_code/README.new.md
 ```
-- copying complete source tree to `import/src` directory in the 
+- copying complete source tree to `import/src` directory 
 ```
-   # put everything to import/src
+   # also treated as a comment
 . import/src
 ```
 
