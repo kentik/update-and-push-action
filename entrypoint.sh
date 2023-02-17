@@ -120,7 +120,10 @@ if [ -n "${INPUT_TRANSFER_MAP}" ]; then
 		echo "[+] Using tranfer_map: ${INPUT_TRANSFER_MAP}"
 	fi
 
-	cat ${INPUT_TRANSFER_MAP} | while read -r src dst; do
+	grep -v "^[ \t]*#" ${INPUT_TRANSFER_MAP} | while read -r src dst; do
+		# removing eventual comments
+		dst=${dst%% *}
+		dst=${dst%%#*}
 		if [ -n "${RUNNER_DEBUG}" ]; then
 			echo "[+] src: ${src} dst: ${dst}"
 		fi
