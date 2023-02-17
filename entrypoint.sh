@@ -147,7 +147,7 @@ if [ -n "${INPUT_TRANSFER_MAP}" ]; then
 		copy_files ${src} ${dst}
 	done
 else
-	copy_files ${INPUT_SOURCE_DIRECTORY} ${INPUT_TARGET_DIRECTORY}
+	copy_files ${INPUT_SOURCE_DIRECTORY}/ ${INPUT_TARGET_DIRECTORY}
 fi
 if [ -n "${RUNNER_DEBUG}" ]; then
 	echo "[+] Target directory after update:"
