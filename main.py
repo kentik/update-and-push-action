@@ -22,7 +22,6 @@ class Args:
         self.debug = False
         if os.environ.get("RUNNER_DEBUG"):
             self.debug = True
-            log.setLevel(logging.DEBUG)
         self.debug_work_dir = os.environ.get("DEBUG_WORK_DIR")
         self.ssh_key = os.environ.get("SSH_DEPLOY_KEY")
         self.api_token = os.environ.get("API_TOKEN_GITHUB")
@@ -202,6 +201,8 @@ def setup_ssh():
 
 def main():
     global args
+    if os.environ.get("RUNNER_DEBUG"):
+        log.setLevel(logging.DEBUG)
     log.debug("Workdir: %s", Path.cwd())
     args = Args("/action.yml")
     log.debug("args: %s", args.__dict__)
@@ -236,7 +237,7 @@ def main():
         ("user.name", args.target_user),
     ):
         run_cmd(["git", "config", "--global", attr, val])
-    run_cmd(["git", "--global", "--add", "safe.directory", "/github/workspace"])
+    run_cmd(["git", "config", "--global", "--add", "safe.directory", "/github/workspace"])
 
     # clone the target repo
     info(f"Cloning repository '{args.target_repository}'")
