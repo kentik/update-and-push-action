@@ -169,8 +169,8 @@ def apply_transfer_map(map_file: Path, clone_dir: str):
 
 def setup_ssh():
     info("Using SSH_DEPLOY_KEY")
-    k = NamedTemporaryFile("rw")
-    h = NamedTemporaryFile("rw")
+    k = NamedTemporaryFile("w")
+    h = NamedTemporaryFile("w")
 
     def cleanup_ssh():
         log.debug("closing: %s", k.name)
