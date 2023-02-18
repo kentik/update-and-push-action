@@ -2,6 +2,7 @@ import atexit
 import logging
 import os
 import re
+import sys
 import subprocess
 from collections import defaultdict
 from pathlib import Path
@@ -12,7 +13,7 @@ import yaml
 
 logging.basicConfig(
     level=logging.INFO,
-    format="[%(levelname)s] %(message)s",
+    format="%(asctime)s [%(levelname)s] %(message)s",
 )
 log = logging.getLogger()
 
@@ -71,12 +72,12 @@ args: Optional[Args] = None
 
 
 def fail(msg: str):
-    print("::error::", msg)
+    log.error(msg)
     exit(1)
 
 
 def info(msg: str):
-    print("[+]", msg)
+    log.info(msg)
 
 
 def run_cmd(cmd: List[str]) -> bool:
@@ -177,7 +178,9 @@ def setup_ssh():
     h = NamedTemporaryFile("rw")
 
     def cleanup_ssh():
+        log.debug("closing: %s", k.name)
         k.file.close()
+        log.debug("closing: %s", h.name)
         h.file.close()
 
     atexit.register(cleanup_ssh)
@@ -202,6 +205,7 @@ def main():
     global args
     if os.environ.get("RUNNER_DEBUG"):
         log.setLevel(logging.DEBUG)
+        log.debug("Python version", sys.version)
     log.debug("Workdir: %s", Path.cwd())
     args = Args("/action.yml")
     log.debug("args: %s", args.__dict__)
