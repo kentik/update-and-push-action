@@ -213,7 +213,8 @@ def main():
         setup_ssh()
         git_url = f"git@{args.target_server}:{args.target_user}/{args.target_repository}.git"
     else:
-        git_url = f"https://{args.target_user}:{args.api_token}@{args.target_server}/{args.target_user}/{args.target_repository} "
+        p = "/".join([args.target_server, args.target_user, args.target_repository])
+        git_url = f"https://{args.target_user}:{args.api_token}@{p}"
     log.debug("git_url: %s", git_url)
     # setup git
     if args.debug:
