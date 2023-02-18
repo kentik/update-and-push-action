@@ -205,7 +205,7 @@ def main():
     global args
     if os.environ.get("RUNNER_DEBUG"):
         log.setLevel(logging.DEBUG)
-        log.debug("Python version", sys.version)
+        log.debug("Python version: %s", sys.version)
     log.debug("Workdir: %s", Path.cwd())
     args = Args("/action.yml")
     log.debug("args: %s", args.__dict__)
