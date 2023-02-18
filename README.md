@@ -6,14 +6,15 @@ Github action updating target repository with files from local directory.
 This action expects the source tree (provided of the `source_directory`) to be checked out in the workspace.
 
 The action performs following steps:
-- checks out the `target_branch` from the `target_repository` into temporary directory
-- if `transfer_map` file is specified, rsyncs all files and directories from `src` to the `dst` for every (non-comment) line in the file.
-  Transfer map syntax is described bellow.
-  If no `transfer_map` is provided, rsyncs all filess and directories from `source_directory` to `target_directory`
-  The rsync command deletes extraneous files and directories from the destination directory unless they are matched by an entry
-  in the `exclude_filter` file. The `.git` directory is always excluded.
-- commits modified tree to the `target_branch` of the `target_repository`
-- pushes commits to the `target_repository`
+1. checks out the `target_branch` from the `target_repository` into temporary directory 
+2. if no `transfer_map` is provided, copies all files and directories from `source_directory` to `target_directory`
+   using `rsync`. The rsync command deletes extraneous files and directories from the destination directory unless they
+   are matched by an entry in the `exclude_filter` file. The `.git` directory is always excluded. 
+3. if `transfer_map` is specified, copies all files and directories from `src` to the `dst` for every entry in the
+   `transfer_map` file. Transfer map syntax is described bellow. Source paths in the `transfer_map` are relative to
+   the `source_directory`. Destination paths are relative to the `target_directory`. 
+4. commits modified tree to the `target_branch` of the `target_repository`
+5. pushes commits to the `target_repository`
 
 If the `create_target_branch` argument is set to `True` the `target_branch` is created in the `target_repository` if it does not exist.
 The `commit_message` argument allows to provide a template for the commite message to the target repository. The `${ORIGIN_COMMIT}` variable
