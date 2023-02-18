@@ -202,12 +202,12 @@ def main():
     if not args.ssh_key and not args.api_token:
         fail("Either 'SSH_DEPLOY_KEY' or 'API_TOKEN_GITHUB' must be present in the environment.")
         return
-    if args.ssh_key:
-        setup_ssh()
-        git_url = f"git@{args.target_server}:{args.target_user}/{args.target_repository}.git"
-    else:
+    if args.api_token:
         p = "/".join([args.target_server, args.target_user, args.target_repository])
         git_url = f"https://{args.target_user}:{args.api_token}@{p}"
+    else:
+        setup_ssh()
+        git_url = f"git@{args.target_server}:{args.target_user}/{args.target_repository}.git"
     log.debug("git_url: %s", git_url)
     # setup git
     if args.debug:
