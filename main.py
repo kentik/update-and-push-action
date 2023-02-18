@@ -95,10 +95,7 @@ def copy_files(sources: List[str], destination: str, clone_dir: str):
     if missing_sources:
         fail(f"Following sources do not exist: {', '.join([str(e) for e in missing_sources])}")
         return
-    if args.target_directory and args.target_directory != ".":
-        target = os.path.sep.join([clone_dir, args.target_directory, destination])
-    else:
-        target = os.path.sep.join([clone_dir, destination])
+    target = os.path.sep.join([clone_dir, destination])
     info(f"Copying {', '.join(sources)} to {target}")
     target_parent = Path(target).parent
     if not target_parent.is_dir():
@@ -163,7 +160,11 @@ def apply_transfer_map(map_file: Path, clone_dir: str):
             sources = [os.path.sep.join([args.source_directory, s]) for s in target_map[t]]
         else:
             sources = target_map[t]
-        copy_files(sources, t, clone_dir)
+        if args.target_directory and args.target_directory != ".":
+            target = os.path.sep.join([args.target_directory, t])
+        else:
+            target = t
+        copy_files(sources, target, clone_dir)
 
 
 def setup_ssh():
