@@ -284,16 +284,10 @@ def main():
                 clone_dir,
             )
 
-        if args.debug:
-            log.debug("Clone dir after update: ")
-
-            def reporter(message: str):
-                log.debug("   %s", message)
-
-            list_dir_recursive(Path(clone_dir), reporter)
-
         # commit changes, if any
         os.chdir(clone_dir)
+        log.debug("Changed workdir to: %s", Path.cwd())
+
         info("Adding commit")
         run_cmd(["git", "add", "."])
 
@@ -305,7 +299,9 @@ def main():
                 log.error("Failed to run git status: %s", ex)
 
         # Avoid the git commit failure if there are no changes to commit
-        if subprocess.call(["git", "diff-index", "--quiet", "HEAD"]):
+        ret = subprocess.call(["git", "diff-index", "--quiet", "HEAD"])
+        log.debug("git diff-index returned: %d", ret)
+        if ret == 0:
             # no changes to commit
             info("No changes to commit")
             if not new_branch:
