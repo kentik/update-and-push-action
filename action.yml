@@ -56,18 +56,7 @@ inputs:
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - '${{ inputs.transfer_map }}' 
-    - '${{ inputs.source_directory }}'
-    - '${{ inputs.target_user }}'
-    - '${{ inputs.target_repository }}'
-    - '${{ inputs.target_server }}'
-    - '${{ inputs.commit_email }}'
-    - '${{ inputs.target_branch }}'
-    - '${{ inputs.commit_message }}'
-    - '${{ inputs.target_directory }}'
-    - '${{ inputs.create_target_branch }}'
-    - '${{ inputs.exclude_filter }}'
+
 branding:
   icon: git-commit
   color: green
