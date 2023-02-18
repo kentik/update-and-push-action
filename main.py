@@ -1,4 +1,3 @@
-import atexit
 import logging
 import os
 import re
@@ -169,29 +168,22 @@ def apply_transfer_map(map_file: Path, clone_dir: str):
 
 def setup_ssh():
     info("Using SSH_DEPLOY_KEY")
-    k = NamedTemporaryFile("w")
-    h = NamedTemporaryFile("w")
+    args.key = NamedTemporaryFile("w")
+    args.known_hosts = NamedTemporaryFile("w")
 
-    def cleanup_ssh():
-        log.debug("closing: %s", k.name)
-        k.file.close()
-        log.debug("closing: %s", h.name)
-        h.file.close()
-
-    atexit.register(cleanup_ssh)
-
-    k.file.write(args.ssh_key)
-    k.flush()
-    log.debug("Wrote SSH_DEPLOY_KEY to '%s'", k.name)
+    args.key.file.write(args.ssh_key)
+    args.key.flush()
+    log.debug("Wrote SSH_DEPLOY_KEY to '%s'", args.key.name)
     try:
-        h.file.write(
+        args.known_hosts.file.write(
             subprocess.check_output(["ssh-keyscan", "-H", "github.com"], stderr=subprocess.DEVNULL).decode("utf-8")
         )
+        args.known_hosts.flush()
     except subprocess.CalledProcessError as ex:
         fail(f"ssh-keyscan failed: {ex}")
         return
-    log.debug("Wrote known hosts to '%s'", h.name)
-    os.environ["GIT_SSH_COMMAND"] = f"ssh -i {k.name} -o UserKnownHostsFile={h.name}"
+    log.debug("Wrote known hosts to '%s'", args.known_hosts.name)
+    os.environ["GIT_SSH_COMMAND"] = f"ssh -i {args.key.name} -o UserKnownHostsFile={args.known_hosts.name}"
 
 
 def main():
@@ -235,6 +227,12 @@ def main():
 
     # clone the target repo
     info(f"Cloning repository '{args.target_repository}'")
+    if args.debug:
+        if git_url.startswith("git@"):
+            log.debug("GIT_SSH_COMMAND: %s", os.environ["GIT_SSH_COMMAND"])
+            log.debug("key: %s (exists: %s)", args.key.name, Path(args.key.name).exists())
+            log.debug("known_hosts: %s (exists: %s)", args.known_hosts.name, Path(args.known_hosts.name).exists())
+
     with TemporaryDirectory() as clone_dir:
         new_branch = False
         run_cmd(["git", "config", "--global", "--add", "safe.directory", clone_dir])
