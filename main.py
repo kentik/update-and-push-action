@@ -202,7 +202,8 @@ def setup_ssh():
 
 def main():
     global args
-    args = Args("action.yml")
+    log.debug("Workdir: %s", Path.cwd())
+    args = Args("/action.yml")
     log.debug("args: %s", args.__dict__)
     if args.debug_work_dir:
         os.chdir(args.debug_work_dir)
