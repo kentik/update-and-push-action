@@ -34,11 +34,10 @@ class Args:
             self.origin_commit = ""
         with Path(action_spec).open() as f:
             action = yaml.safe_load(f)
-        log.debug("action: %s", action)
         for a, d in action["inputs"].items():
             key = f"INPUT_{a.upper()}"
             log.debug(
-                "a: %s key: %s default: %s env: %s",
+                "input: %s key: %s default: %s env: %s",
                 a,
                 key,
                 d.get("default"),
@@ -220,9 +219,10 @@ def main():
         setup_ssh()
         git_url = f"git@{args.target_server}:{args.target_user}/{args.target_repository}.git"
     else:
-        git_url = f"https://{args.target_user}:{args.api_token}@{args.target_server}/{args.target_user}/"\
-                  "{args.target_repository} "
-
+        git_url = (
+         f"https://{args.target_user}:{args.api_token}@{args.target_server}/{args.target_user}/{args.target_repository}"
+        )
+    log.debug("git_url: %s", git_url)
     # setup git
     if args.debug:
         try:
