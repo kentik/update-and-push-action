@@ -3,7 +3,7 @@ Github action updating target repository with files from local directory.
 
 **Inspired by [github-action-push-to-another-repository](https://github.com/cpina/github-action-push-to-another-repository)**
 
-This action expects the source tree (provided of the `source_directory`) to be checked out in the workspace.
+This action expects the source tree (provider of the `source_directory`) to be checked out in the workspace.
 
 The action performs following steps:
 1. checks out the `target_branch` from the `target_repository` into temporary directory 
