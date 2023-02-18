@@ -2,8 +2,8 @@ import atexit
 import logging
 import os
 import re
-import sys
 import subprocess
+import sys
 from collections import defaultdict
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
@@ -51,17 +51,13 @@ class Args:
         if not self.target_user:
             self.target_user = os.environ.get("GITHUB_REPOSITORY_OWNER")
             if not self.target_user:
-                fail(
-                    "No 'target_user' specified and 'GITHUB_REPOSITORY_OWNER' not present in environment"
-                )
+                fail("No 'target_user' specified and 'GITHUB_REPOSITORY_OWNER' not present in environment")
                 return
             log.debug("Set 'target_user' from 'GITHUB_REPOSITORY_OWNER'")
         if not self.target_server:
             self.target_server = os.environ.get("GITHUB_SERVER_URL")
             if not self.target_server:
-                fail(
-                    "No 'target_server' specified and 'GITHUB_SERVER_URL' not present in environment"
-                )
+                fail("No 'target_server' specified and 'GITHUB_SERVER_URL' not present in environment")
                 return
             # remove leading protocol specification from the target_server
             self.target_server = self.target_server.split("//")[1]
@@ -95,21 +91,15 @@ def list_dir_recursive(d: Path, reporter: Callable[[str], None]):
 
 
 def copy_files(sources: List[str], destination: str, clone_dir: str):
-    if args.source_directory != ".":
-        origins = [os.path.sep.join([args.source_directory, s]) for s in sources]
-    else:
-        origins = sources
-    missing_sources = [p for p in origins if not Path(p).exists()]
+    missing_sources = [p for p in sources if not Path(p).exists()]
     if missing_sources:
-        fail(
-            f"Following sources do not exist: {', '.join([str(e) for e in missing_sources])}"
-        )
+        fail(f"Following sources do not exist: {', '.join([str(e) for e in missing_sources])}")
         return
     if args.target_directory and args.target_directory != ".":
         target = os.path.sep.join([clone_dir, args.target_directory, destination])
     else:
         target = os.path.sep.join([clone_dir, destination])
-    info(f"Copying {', '.join(origins)} to {target}")
+    info(f"Copying {', '.join(sources)} to {target}")
     target_parent = Path(target).parent
     if not target_parent.is_dir():
         log.debug("Creating: %s", target_parent.as_posix())
@@ -120,7 +110,7 @@ def copy_files(sources: List[str], destination: str, clone_dir: str):
     if args.exclude_filter:
         rsync.append("--exclude-from")
         rsync.append(args.exclude_filter)
-    for p in origins:
+    for p in sources:
         rsync.append(p)
     rsync.append(target)
     log.debug("rsync cmd: %s", rsync)
@@ -169,7 +159,11 @@ def apply_transfer_map(map_file: Path, clone_dir: str):
         for n, t in enumerate(targets, start=1):
             log.debug("%4d: dst: %s\t src: %s", n, t, " ".join(target_map[t]))
     for t in targets:
-        copy_files(target_map[t], t, clone_dir)
+        if args.source_directory != ".":
+            sources = [os.path.sep.join([args.source_directory, s]) for s in target_map[t]]
+        else:
+            sources = target_map[t]
+        copy_files(sources, t, clone_dir)
 
 
 def setup_ssh():
@@ -190,9 +184,7 @@ def setup_ssh():
     log.debug("Wrote SSH_DEPLOY_KEY to '%s'", k.name)
     try:
         h.file.write(
-            subprocess.check_output(
-                ["ssh-keyscan", "-H", "github.com"], stderr=subprocess.DEVNULL
-            ).decode("utf-8")
+            subprocess.check_output(["ssh-keyscan", "-H", "github.com"], stderr=subprocess.DEVNULL).decode("utf-8")
         )
     except subprocess.CalledProcessError as ex:
         fail(f"ssh-keyscan failed: {ex}")
@@ -215,17 +207,13 @@ def main():
     # setup authentication
     # sanity check
     if not args.ssh_key and not args.api_token:
-        fail(
-            "Either 'SSH_DEPLOY_KEY' or 'API_TOKEN_GITHUB' must be present in the environment."
-        )
+        fail("Either 'SSH_DEPLOY_KEY' or 'API_TOKEN_GITHUB' must be present in the environment.")
         return
     if args.ssh_key:
         setup_ssh()
         git_url = f"git@{args.target_server}:{args.target_user}/{args.target_repository}.git"
     else:
-        git_url = (
-         f"https://{args.target_user}:{args.api_token}@{args.target_server}/{args.target_user}/{args.target_repository}"
-        )
+        git_url = f"https://{args.target_user}:{args.api_token}@{args.target_server}/{args.target_user}/{args.target_repository} "
     log.debug("git_url: %s", git_url)
     # setup git
     if args.debug:
@@ -264,13 +252,9 @@ def main():
         )
         if ret and args.create_target_branch:
             # branch did not exist, clone the main branch
-            ret = subprocess.call(
-                ["git", "clone", "--single-branch", "--depth", "1", git_url, clone_dir]
-            )
+            ret = subprocess.call(["git", "clone", "--single-branch", "--depth", "1", git_url, clone_dir])
             if ret:
-                fail(
-                    f"Failed to clone the target repository: {args.target_repository} branch: {args.target_branch}"
-                )
+                fail(f"Failed to clone the target repository: {args.target_repository} branch: {args.target_branch}")
                 return
             # create new branch
             info(f"Creating new branch: {args.target_branch}")
@@ -316,9 +300,7 @@ def main():
         # We also promise to put ORIGIN_COMMIT in the environment
         os.environ["ORIGIN_COMMIT"] = args.origin_commit
         try:
-            msg = subprocess.check_output(
-                ["sh", "-c", f"eval echo {args.commit_message}"]
-            ).decode("utf-8")
+            msg = subprocess.check_output(["sh", "-c", f"eval echo {args.commit_message}"]).decode("utf-8")
         except subprocess.CalledProcessError as ex:
             fail(f"Failed to construct commit message: {ex}")
         log.debug("Commit message: %s", msg)
