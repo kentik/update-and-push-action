@@ -2,16 +2,24 @@ name: update-and-push
 description: >-
   This action supports update of target repository with files in source repository.
 inputs:
+  transfer_map:
+    description: >-
+      [Optional] Path to configuration file describing transformation
+      of directory structure from source to destionation repository.
+      If present, overrides 'source_directory' and 'target_directory'
+    required: false
+    default: ''
   source_directory:
-    description: Directory to use as base for update
+    description: >-
+      [Optional] Directory to use as base for update
+    required: false
     default: '.'
-    required: true
   target_user:
     description: >-
-      [Optional[ Name of the user/organization owning the target repository.
+      [Optional] Name of the user/organization owning the target repository.
       (Default: same as the owner of the source repository)
+    required: false
     default: ''
-    required: False
   target_repository:
     description: Name of the target repository
     required: true
@@ -20,45 +28,35 @@ inputs:
     required: true
   target_server:
     description: 'Target git server'
-    default: ''
     required: false
+    default: ''
   target_branch:
     description: >-
       [Optional] Target branch name (default: "main")
-    default: main
     required: false
+    default: main
   commit_message:
     description: >-
       [Optional] Commit message. ${ORIGIN_COMMIT} is replaced by the URL@commit in the origin repo triggering the action
-    default: 'Update from ${ORIGIN_COMMIT}'
     required: false
+    default: 'Update from ${ORIGIN_COMMIT}'
   target_directory:
     description: '[Optional] Directory in the target repository to update'
-    default: ''
     required: false
+    default: ''
   create_target_branch:
     description: '[Optional] Boolean indicating whether to create the target branch if it does not exist'
-    default: 'false'
     required: false
+    default: 'false'
   exclude_filter:
-    description: '[Optional] Name of file containing rsync-style exlude list'
+    description: '[Optional] Name of file containing rsync-style exclude list'
     required: false
     default: ''
         
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - '${{ inputs.source_directory }}'
-    - '${{ inputs.target_user }}'
-    - '${{ inputs.target_repository }}'
-    - '${{ inputs.target_server }}'
-    - '${{ inputs.commit_email }}'
-    - '${{ inputs.target_branch }}'
-    - '${{ inputs.commit_message }}'
-    - '${{ inputs.target_directory }}'
-    - '${{ inputs.create_target_branch }}'
-    - '${{ inputs.exclude_filter }}'
+
 branding:
   icon: git-commit
   color: green
