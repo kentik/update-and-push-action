@@ -66,8 +66,9 @@ docs/README.md new_code/README.new.md
 
 ## Authentication and permissions
 
-Access to the target repository may be authenticated either by using `${SSH_DEPLOY_KEY}` or `${API_GITHUB_TOKEN}` from the environment.
-SSH key is preferred if available. The identity associated with the secret must have permissions for the target repository:
+Access to the target repository may be authenticated either by using `${SSH_DEPLOY_KEY}` or `${API_GITHUB_TOKEN}`
+from the environment. `API_GITHUB_TOKEN` is preferred if available. The identity associated with the secret must have
+permissions for the target repository:
 - Read access to metadata
 - Read and Write access to code and pull requests
 

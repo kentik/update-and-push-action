@@ -232,8 +232,7 @@ def main():
             log.debug("GIT_SSH_COMMAND: %s", os.environ["GIT_SSH_COMMAND"])
             log.debug("key: %s (exists: %s)", args.key.name, Path(args.key.name).exists())
             try:
-                key_sha = subprocess.check_output(["sha256sum", args.key.name])
-                log.debug("key sha256: %s", key_sha)
+                log.debug("key sha256: %s", subprocess.check_output(["sha256sum", args.key.name]).decode("utf-8"))
             except subprocess.CalledProcessError as ex:
                 log.error("Failed to get sha256sum for %s: %s", args.key.name, ex)
             log.debug("known_hosts: %s (exists: %s)", args.known_hosts.name, Path(args.known_hosts.name).exists())
