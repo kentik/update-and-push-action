@@ -227,15 +227,6 @@ def main():
 
     # clone the target repo
     info(f"Cloning repository '{args.target_repository}'")
-    if args.debug:
-        if git_url.startswith("git@"):
-            log.debug("GIT_SSH_COMMAND: %s", os.environ["GIT_SSH_COMMAND"])
-            log.debug("key: %s (exists: %s)", args.key.name, Path(args.key.name).exists())
-            try:
-                log.debug("key sha256: %s", subprocess.check_output(["sha256sum", args.key.name]).decode("utf-8"))
-            except subprocess.CalledProcessError as ex:
-                log.error("Failed to get sha256sum for %s: %s", args.key.name, ex)
-            log.debug("known_hosts: %s (exists: %s)", args.known_hosts.name, Path(args.known_hosts.name).exists())
 
     with TemporaryDirectory() as clone_dir:
         new_branch = False
@@ -260,10 +251,6 @@ def main():
             if ret:
                 fail(f"Failed to clone the target repository: {args.target_repository} branch: {args.target_branch}")
                 return
-            # create new branch
-            info(f"Creating new branch: {args.target_branch}")
-            run_cmd(["git", "branch", args.target_branch])
-            run_cmd(["git", "switch", args.target_branch])
             new_branch = True
 
         # copy files
@@ -298,6 +285,12 @@ def main():
             info("No changes to commit")
             if not new_branch:
                 exit(0)
+
+        if new_branch:
+            # create new branch
+            info(f"Creating new branch: {args.target_branch}")
+            run_cmd(["git", "branch", args.target_branch])
+            run_cmd(["git", "switch", args.target_branch])
 
         # Construct commit message
         # It is constructed by evaluating string from configuration which may insert environment variables
