@@ -283,8 +283,7 @@ def main():
         if ret == 0:
             # no changes to commit
             info("No changes to commit")
-            if not new_branch:
-                exit(0)
+            exit(0)
 
         if new_branch:
             # create new branch
