@@ -1,7 +1,7 @@
 FROM alpine:latest
 RUN apk add --no-cache git openssh-client rsync python3
 # ignore externaly managed error when installing packages globally
-RUN rm -rf /usr/lib/python3.11/EXTERNALLY-MANAGED
+RUN rm -rf /usr/lib/python*/EXTERNALLY-MANAGED
 RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 COPY requirements.txt /requirements.txt
